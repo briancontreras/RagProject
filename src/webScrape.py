@@ -8,14 +8,26 @@ def getHTMLdocument(url):
     response = requests.get(url)
     return response.text
 
-def writeToSingleFile(soup, fileName):
-    for text in soup.find_all('pre'):
-        with open(fileName, "w") as file:
+def writeToSingleFileWestLaw(soup, fileName):
+    #Get  Article section
+    for title in soup.find_all('div', class_='co_title'):
+        for strong_tag in title.find_all('strong'):
+            with open(fileName, 'a',encoding="utf-8") as file:
+                ArticleTitle = strong_tag.get_text(strip=True)
+                file.write(ArticleTitle + "\n") 
+    
+    #Get contents of Article
+    for text in soup.find_all('div', class_='co_contentBlock co_section'):
+        with open(fileName, 'a',encoding="utf-8") as file:
             file.write(str(text.get_text(strip=True)))
+    with open(fileName , "a") as file:
+        file.write("\n")
 
 
-url_to_scrape = "https://www.govinfo.gov/content/pkg/PLAW-119publ1/html/PLAW-119publ1.htm"
+
+westLawUrls = ["https://govt.westlaw.com/calregs/Document/I7A6B47D0FD4311ECBA0CE8BD2C3F45C2?viewType=FullText&originationContext=documenttoc&transitionType=CategoryPageItem&contextData=(sc.Default)"]
+url_to_scrape = westLawUrls[0]
 html_document = getHTMLdocument(url_to_scrape)
 testSOUP = BeautifulSoup(html_document,'html.parser')
 
-writeToSingleFile(testSOUP,'test.txt')
+writeToSingleFileWestLaw(testSOUP,'test.txt')

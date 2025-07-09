@@ -31,4 +31,4 @@ html_test = getHTMLdocument(url_test)
 testSOUP = BeautifulSoup(html_test,'html.parser')
 
 for div in testSOUP.find_all('div', class_='article-title'):
-    print(div.find('h1').get_text(strip=True))
+    print(div.get_text(strip=True))
