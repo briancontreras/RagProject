@@ -40,6 +40,10 @@ westLawUrls = [
     "https://govt.westlaw.com/calregs/Document/I408F98B35A0D11EC8227000D3A7C4BC3?viewType=FullText&originationContext=documenttoc&transitionType=CategoryPageItem&contextData=(sc.Default)",
     "https://govt.westlaw.com/calregs/Document/I40B3C2835A0D11EC8227000D3A7C4BC3?viewType=FullText&originationContext=documenttoc&transitionType=CategoryPageItem&contextData=(sc.Default)"
     ]
+
+
+
+
 def getUrls(mainPage):
     response = requests.get(mainPage)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -56,10 +60,10 @@ def getUrls(mainPage):
     return urls
     # print(urls)
 
-# scrapeUrls(westLawUrls, 'test.txt')
-urls = (getUrls("https://govt.westlaw.com/calregs/Browse/Home/California/CaliforniaCodeofRegulations?guid=I7D9CB5804C6611EC93A8000D3A7C4BC3&originationContext=documenttoc&transitionType=Default&contextData=(sc.Default)"))
-print(urls)
-subUrls = []
-for url in urls:
-    subUrls.append(getUrls(url))
-scrapeUrls(subUrls, 'urls.txt')
+scrapeUrls(westLawUrls, 'test.txt')
+# urls = (getUrls("https://govt.westlaw.com/calregs/Browse/Home/California/CaliforniaCodeofRegulations?guid=I7D9CB5804C6611EC93A8000D3A7C4BC3&originationContext=documenttoc&transitionType=Default&contextData=(sc.Default)"))
+# print(urls)
+# subUrls = []
+# for url in urls:
+#     subUrls.append(getUrls(url))
+# scrapeUrls(subUrls, 'urls.txt')
