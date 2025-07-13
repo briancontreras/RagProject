@@ -43,4 +43,16 @@ class LegiScanAPI:
         except json.JSONDecodeError as e:
             print(f"Failed to parse JSON response: {e}")
             raise
+    
+    def get_dataset_list(self, state: Optional[str] = None, year: Optional[int] = None) -> List[Dict]:
+        #creates hashmap of possible paramters
+        params = {}
+
+        if state:  
+            params['state'] = state
+        if year:
+            params['year'] = year
+        
+        response = self._make_request('/datasetlist',params)
+        return response.get('datasetlist', [])
 
