@@ -58,4 +58,18 @@ class LegiScanAPI:
         # Use root path with query parameters instead of /datasetlist
         response = self._make_request('/', params)
         return response.get('datasetlist', [])
+    
+    def get_dataset(self, id: Optional[str] = None, accessKey: Optional[int] = None, format: Optional[str] = None):
+        params = {'op' : 'getDataset'}
+
+        if id:
+            params['id']
+        if accessKey:
+            params['accessKey']
+        if format:
+            params['format']
+        
+        response = self._make_request('/',params)
+        return response.get('dataset', [])
+    
 
