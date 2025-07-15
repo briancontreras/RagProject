@@ -12,4 +12,7 @@ access_key = jsonFile[0]['access_key']
 print(id)
 print(access_key)
 
+rawData = api.get_dataset(id,access_key,"json")
+
+
 
