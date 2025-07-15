@@ -65,9 +65,9 @@ class LegiScanAPI:
         if id:
             params['id'] = id
         if accessKey:
-            params['access_Key'] = accessKey
-        # if format:
-        #     params['format'] = format
+            params['access_key'] = accessKey
+        if format:
+            params['format'] = format
         
         response = self._make_request('/',params)
         return response.get('dataset', [])
