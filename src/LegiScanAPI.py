@@ -3,11 +3,19 @@ import requests
 #Needs Json class to utilize json response data
 import json
 
+#imports for zip file
+import zipfile
+import base64
+import io
+from pathlib import Path
+import logging
+
+
 #classes to load env api key
 import os
 from dotenv import load_dotenv
 
-from typing import Optional,Dict,List
+from typing import Optional,Dict,List, Any 
 
 
 class LegiScanAPI:

@@ -1,5 +1,6 @@
 #imports LegiScanAPI class previously defined
 from LegiScanAPI import LegiScanAPI
+import zipProcessor
 import os
 
 
@@ -12,7 +13,8 @@ access_key = jsonFile[0]['access_key']
 print(id)
 print(access_key)
 
-rawData = api.get_dataset(id,access_key,"json")
+jsonFile = zipProcessor.parse_zip_response(api.get_dataset(id,access_key,"json"))
+print(jsonFile)
 
 
 
