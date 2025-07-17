@@ -16,7 +16,7 @@ import os
 from dotenv import load_dotenv
 
 from typing import Optional,Dict,List, Any 
-
+from zipProcessor import process_zip,read_zip
 
 class LegiScanAPI:
     #function to initialize Api key and create API session
@@ -78,6 +78,12 @@ class LegiScanAPI:
             params['format'] = format
         
         response = self._make_request('/',params)
-        return response.get('dataset', [])
+        dataset = response.get('dataset',[])
+
+        if process_zip and isinstance(dataset, dict) and 'zip' in dataset:
+            dataset['zip_file'] = read_zip(dataset['zip'])
+
+        
+        return dataset
     
 

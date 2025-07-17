@@ -1,71 +1,51 @@
-#uses json library to package data
-import json
-
-#uses zipfile and base64 to read the zip file
 import zipfile
 import base64
-
 import io
-import os
-from pathlib import Path
-from typing import Dict, List, Optional, Any
-import logging
 
-#set up logger info
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
-class zipResponseParser:
-    def __init__(self, base_output_dir: str = "extracted_data"):
-        self.base_output_dir = Path(base_output_dir)
-        self.base_output_dir.mkdir(exist_ok=True)
-    
-def parse_zip_response(self, response_data: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Parse ZIP response and extract JSON files
-        
-        Args:
-            response_data: The JSON response containing ZIP data
-            
-        Returns:
-            Dictionary containing extraction results
-        """
-        if response_data.get("status") != "OK":
-            raise ValueError(f"Response status is not OK twin: {response_data.get('status')}")
-            
-        dataset = response_data.get("dataset", {})
-        zip_b64 = dataset.get("zip")
-        
-        if not zip_b64:
-            raise ValueError("No ZIP data found in response")
-            
-        # Create session-specific directory
-        session_name = dataset.get("session_name", "unknown_session")
-        session_dir = self.base_output_dir / self._sanitize_filename(session_name)
-        session_dir.mkdir(exist_ok=True)
-        
-        # Decode base64 ZIP data
-        try:
-            zip_binary = base64.b64decode(zip_b64)
-        except Exception as e:
-            raise ValueError(f"Failed to decode base64 ZIP data: {e}")
-            
-        # Extract files from ZIP
-        extraction_results = self._extract_zip_files(
-            zip_binary, session_dir, dataset
-        )
-        
-        return {
-            "status": "success",
-            "session_info": {
-                "session_id": dataset.get("session_id"),
-                "session_name": session_name,
-                "dataset_hash": dataset.get("dataset_hash"),
-                "dataset_date": dataset.get("dataset_date"),
-                "dataset_size": dataset.get("dataset_size")
-            },
-            "extraction_results": extraction_results,
-            "output_directory": str(session_dir)
-        }
-    
+def read_zip(file):
 
+    if isinstance(file,str):
+        if file.endswith('.zip') or '/' in file or '\\' in file:
+            return zipfile.ZipFile(file,mode='r')
+        else:
+            try:
+                zip_bytes = base64.b64decode(file)
+                zip_buffer = io.BytesIO(zip_bytes)
+                return zipfile.ZipFile(zip_buffer, mode='r')
+            except Exception as e:
+                raise ValueError(f"Gang this isn't base 64 encoded twin : {e}")
+    else:
+        return zipfile.ZipFile(file,mode='r')
+def process_zip(zipfile):
+    file_info = []
+
+    for file_info in zipfile.filelist:
+        file_info.append({
+            'filename' : file_info.filename,
+            'file_size' : file_info.size,
+            'compress_size' : file_info.compress_size,
+            'date_time' : file_info.date_time
+        })
+    return {
+        'files' : file_info,
+        'total_files' : len(file_info),
+        'zip_object' : zipfile
+    }
+def extract_all_from_base64_zip(base64_zip, extract_path=None):
+    """Extract all files from base64 ZIP"""
+    try:
+        zip_bytes = base64.b64decode(base64_zip)
+        zip_buffer = io.BytesIO(zip_bytes)
+        
+        with zipfile.ZipFile(zip_buffer, mode='r') as zip_file:
+            if extract_path:
+                zip_file.extractall(extract_path)
+            else:
+                # Return dictionary with filename: content
+                extracted_files = {}
+                for filename in zip_file.namelist():
+                    extracted_files[filename] = zip_file.read(filename)
+                return extracted_files
+    except Exception as e:
+        raise ValueError(f"Error extracting base64 ZIP: {e}")
